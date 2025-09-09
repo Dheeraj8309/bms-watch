@@ -1,0 +1,42 @@
+name: BMS Watcher
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes
+  workflow_dispatch:        # allow manual run from Actions tab
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Run watcher
+        env:
+          # Email creds — add these in: Repo → Settings → Secrets and variables → Actions
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_TO:  ${{ secrets.EMAIL_TO }}
+
+          # Targeting for your case
+          CITY_SLUG: vijayawada
+          MOVIE_KEYWORDS: demon,slayer,infinity,castle,japanese
+          THEATRE_KEYWORDS: inox,laila,mg,road
+          CHECK_DATES_AHEAD: "7"
+        run: |
+          python bms_watch.py
