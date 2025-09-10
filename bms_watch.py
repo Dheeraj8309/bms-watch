@@ -1,6 +1,6 @@
 import os, re, json, time, smtplib
 from pathlib import Path
-from email.mime_text import MIMEText
+from email.mime.text import MIMEText
 
 # Optional for local runs; on GitHub Actions we use env vars
 try:
