@@ -2,7 +2,7 @@ name: BMS Watcher
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes
+    - cron: "*/50 * * * *"   # every 5 minutes
   workflow_dispatch:        # allow manual run from Actions tab
 
 jobs:
