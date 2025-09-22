@@ -2,8 +2,8 @@ name: BMS Watcher
 
 on:
   schedule:
-    - cron: "*/50 * * * *"   # every 5 minutes
-  workflow_dispatch:        # allow manual run from Actions tab
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 jobs:
   run:
@@ -26,17 +26,22 @@ jobs:
 
       - name: Run watcher
         env:
-          # Email creds — add these in: Repo → Settings → Secrets and variables → Actions
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           EMAIL_TO:  ${{ secrets.EMAIL_TO }}
-
-          # Targeting for your case
           CITY_SLUG: vijayawada
           MOVIE_KEYWORDS: demon,slayer,infinity,castle,japanese
           THEATRE_KEYWORDS: inox,laila,mg,road
           CHECK_DATES_AHEAD: "7"
         run: |
           python bms_watch.py
+
+      - name: Upload debug screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bms-debug-screenshot
+          path: debug_screenshot.png
+          if-no-files-found: ignore
